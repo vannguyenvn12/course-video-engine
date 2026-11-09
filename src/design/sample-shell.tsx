@@ -1,6 +1,5 @@
-import {AbsoluteFill} from 'remotion';
 import {useEffect} from 'react';
-import {colors, layout} from './tokens';
+import {colors, canvas, layout} from './tokens';
 import {loadCourseFonts} from './load-fonts';
 import {StageAmbient} from './stage-ambient';
 
@@ -14,7 +13,15 @@ export const SampleShell: React.FC<SampleShellProps> = ({children}) => {
   }, []);
 
   return (
-    <AbsoluteFill style={{backgroundColor: colors.vault}}>
+    <div
+      style={{
+        position: 'relative',
+        width: canvas.width,
+        height: canvas.height,
+        backgroundColor: colors.vault,
+        overflow: 'hidden',
+      }}
+    >
       <StageAmbient />
       <div
         data-id="stage-safe"
@@ -32,6 +39,6 @@ export const SampleShell: React.FC<SampleShellProps> = ({children}) => {
       >
         {children}
       </div>
-    </AbsoluteFill>
+    </div>
   );
 };

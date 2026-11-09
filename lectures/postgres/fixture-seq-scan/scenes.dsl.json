@@ -1,0 +1,69 @@
+{
+  "lecture": "postgres/fixture-seq-scan",
+  "scenes": [
+    {
+      "id": "s01",
+      "segment": "seg-01",
+      "preset": "opener",
+      "slots": {
+        "title": "Sequential scan",
+        "subtitle": "Every row on disk"
+      },
+      "beats": [
+        {"at": {"segmentStart": true}, "do": "reveal", "target": "page-stack"},
+        {"at": {"word": "sequential", "occurrence": 1}, "do": "emphasize", "target": "hero-title"}
+      ],
+      "transition": "cut"
+    },
+    {
+      "id": "s02",
+      "segment": "seg-02",
+      "preset": "hero-table-with-annotation",
+      "slots": {
+        "title": "Every row examined",
+        "table": {
+          "id": "orders",
+          "columns": ["id", "status", "total"],
+          "rows": [
+            ["1", "pending", "42.00"],
+            ["2", "shipped", "18.50"],
+            ["3", "pending", "9.99"]
+          ]
+        },
+        "annotation": {
+          "id": "counter",
+          "kind": "counter",
+          "label": "Rows scanned",
+          "from": 0,
+          "to": 3
+        }
+      },
+      "beats": [
+        {"at": {"word": "every", "occurrence": 1}, "do": "reveal", "target": "orders"},
+        {"at": {"word": "examined"}, "do": "scan-rows", "target": "orders", "drive": "counter"},
+        {"at": {"word": "index"}, "do": "emphasize", "target": "orders.row[1]"},
+        {"at": {"word": "predicate"}, "do": "focus", "target": "counter"}
+      ],
+      "persist": ["orders"],
+      "transition": "morph"
+    },
+    {
+      "id": "s03",
+      "segment": "seg-03",
+      "preset": "hero-code",
+      "slots": {
+        "title": "Wide rows cost",
+        "code": {
+          "id": "code",
+          "language": "sql",
+          "lines": ["SELECT * FROM orders;", "WHERE status = 'pending';"]
+        }
+      },
+      "beats": [
+        {"at": {"word": "simple"}, "do": "reveal", "target": "code"},
+        {"at": {"word": "latency"}, "do": "highlight-lines", "target": "code.line[1]"}
+      ],
+      "transition": "cut"
+    }
+  ]
+}
