@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Font still measure</title>
+    <style>
+      @font-face {
+        font-family: IBMPlexSans;
+        font-weight: 200;
+        src: url(../fonts/IBMPlexSans-Light.woff2) format('woff2');
+      }
+      @font-face {
+        font-family: IBMPlexSans;
+        font-weight: 400;
+        src: url(../fonts/IBMPlexSans-Regular.woff2) format('woff2');
+      }
+      @font-face {
+        font-family: IBMPlexSans;
+        font-weight: 700;
+        src: url(../fonts/IBMPlexSans-Bold.woff2) format('woff2');
+      }
+      @font-face {
+        font-family: IBMPlexMono;
+        font-weight: 400;
+        src: url(../fonts/IBMPlexMono-Regular.woff2) format('woff2');
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        width: 1920px;
+        height: 1080px;
+        overflow: hidden;
+        background-color: #0a0909;
+        background-image: linear-gradient(#2a222033 1px, transparent 1px),
+          linear-gradient(90deg, #2a222033 1px, transparent 1px);
+        background-size: 48px 48px;
+      }
+    </style>
+  </head>
+  <body>
+    <div
+      data-id="stage-safe"
+      style="
+        position: absolute;
+        left: 96px;
+        top: 96px;
+        right: 96px;
+        bottom: 96px;
+        display: grid;
+        grid-template-columns: repeat(12, 1fr);
+        gap: 32px;
+        align-content: center;
+      "
+    >
+      <div data-id="hero-title" style="grid-column: 1 / span 8">
+        <div
+          style="
+            font-family: IBMPlexSans, sans-serif;
+            font-weight: 700;
+            font-size: 140px;
+            line-height: 1.05;
+            color: #f2ece8;
+            letter-spacing: -0.02em;
+          "
+        >
+          Sequential scan
+        </div>
+        <div
+          data-id="hero-sub"
+          style="
+            margin-top: 24px;
+            font-family: IBMPlexSans, sans-serif;
+            font-weight: 200;
+            font-size: 40px;
+            color: #b8aea6;
+            max-width: 720px;
+          "
+        >
+          Every row on disk
+        </div>
+      </div>
+      <div
+        data-id="accent-panel"
+        style="
+          grid-column: 9 / span 4;
+          background: #1a1514;
+          border: 1px solid #2a2220;
+          border-radius: 12px;
+          padding: 32px;
+          box-shadow: inset 4px 0 0 #c41e3a;
+        "
+      >
+        <div
+          data-id="metric-value"
+          style="
+            font-family: IBMPlexMono, monospace;
+            font-size: 56px;
+            color: #f2ece8;
+            font-variant-numeric: tabular-nums;
+          "
+        >
+          4
+        </div>
+        <div
+          style="
+            margin-top: 8px;
+            font-family: IBMPlexSans, sans-serif;
+            font-size: 28px;
+            color: #b8aea6;
+          "
+        >
+          rows touched
+        </div>
+      </div>
+    </div>
+    <script>
+      document.fonts.ready.then(() => {
+        document.body.dataset.fontsReady = 'true';
+      });
+    </script>
+  </body>
+</html>
