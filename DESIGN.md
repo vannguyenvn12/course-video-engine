@@ -4,7 +4,7 @@
 
 **Job of the video:** make mechanisms visible — not slides of bullet points, but objects that move and connect while the voice explains.
 
-Status: **draft for human approval** (Phase 0.5). `src/design/tokens.ts` must mirror this file after approval.
+Status: **approved** 2026-11-09 (Phase 0.5 complete). `src/design/tokens.ts` mirrors this file.
 
 ---
 
