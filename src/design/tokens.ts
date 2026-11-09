@@ -1,6 +1,5 @@
 /**
- * Design tokens — values are starting points until DESIGN.md (Phase 0.5) is approved.
- * Presets reference roles only, not raw hex in DSL.
+ * Approved values live in DESIGN.md. Presets use role names from this object only.
  */
 export const canvas = {
   width: 1920,
@@ -19,15 +18,33 @@ export const layout = {
 } as const;
 
 export const colors = {
-  bg: '#0a0909',
-  surface: '#121010',
-  surfaceRaised: '#1a1514',
-  border: '#2a2220',
-  text: '#f2ece8',
+  vault: '#0c0a0b',
+  ledger: '#141112',
+  slab: '#1c1817',
+  seam: '#302826',
+  ink: '#f0e8e4',
+  ash: '#b8aea6',
+  signal: '#c41e3a',
+  flare: '#e8274b',
+  signalMist: 'rgba(196, 30, 58, 0.14)',
+  /** @deprecated use vault */
+  bg: '#0c0a0b',
+  /** @deprecated use ledger */
+  surface: '#141112',
+  /** @deprecated use slab */
+  surfaceRaised: '#1c1817',
+  /** @deprecated use seam */
+  border: '#302826',
+  /** @deprecated use ink */
+  text: '#f0e8e4',
+  /** @deprecated use ash */
   textMuted: '#b8aea6',
+  /** @deprecated use signal */
   accent: '#c41e3a',
+  /** @deprecated use flare */
   accentBright: '#e8274b',
-  accentWash: 'rgba(196, 30, 58, 0.12)',
+  /** @deprecated use signalMist */
+  accentWash: 'rgba(196, 30, 58, 0.14)',
 } as const;
 
 export const typography = {
@@ -35,7 +52,7 @@ export const typography = {
   fontBody: 'IBMPlexSans',
   fontMono: 'IBMPlexMono',
   sizes: {
-    display: 140,
+    display: 132,
     h1: 72,
     body: 40,
     caption: 28,
@@ -45,7 +62,7 @@ export const typography = {
     light: 200,
     regular: 400,
     bold: 700,
-    heavy: 800,
+    heavy: 700,
   },
 } as const;
 

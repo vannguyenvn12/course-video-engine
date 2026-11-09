@@ -12,6 +12,7 @@
     "postinstall": "node scripts/copy-fonts.mjs",
     "test": "vitest run",
     "still:font-test": "tsx scripts/render-font-still.ts",
+    "design:stills": "tsx scripts/render-design-samples.ts",
     "qa:geometry": "tsx scripts/lint-still.ts",
     "preset:test": "echo '{\"ok\":false,\"error\":\"not_implemented\"}' && exit 1"
   },
