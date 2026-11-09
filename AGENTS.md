@@ -1,6 +1,6 @@
 # Hướng dẫn cho agent
 
-Đọc `COURSE_VIDEO_ENGINE_SPEC.md` trước khi làm bất cứ việc gì. Chi tiết authoring: `docs/authoring.md`. Human gates → `docs/APPROVAL.md` (self-critic + `pnpm qa`).
+Đọc `COURSE_VIDEO_ENGINE_SPEC.md` trước khi làm bất cứ việc gì. Authoring: `docs/authoring.md`, VoT: `prompts/author-vot.md`, **Opus agentic (không API)**: `docs/AGENTIC_OPUS.md`. Gates → `docs/APPROVAL.md` + `pnpm qa` + xem `out/<lecture>/review/*`.
 
 1. **Bạn không bao giờ được viết tọa độ, kích thước pixel, hay keyframe bằng tay** trong nội dung bài giảng. Bạn viết *ý định* (scene DSL), engine tính hình học.
 2. **Bạn không được tuyên bố xong** khi chưa chạy `pnpm qa` và tất cả gate đều pass (mục 7–8 trong spec).

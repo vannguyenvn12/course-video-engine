@@ -22,7 +22,9 @@
     "whisper:serve": "tsx scripts/whisper-serve.ts",
     "fixture:audio": "tsx scripts/generate-fixture-audio.ts",
     "final:qa": "tsx scripts/final-qa.ts",
-    "preset:golden": "tsx scripts/preset-golden.ts"
+    "preset:golden": "tsx scripts/preset-golden.ts",
+    "opus:verify": "tsx scripts/opus-phase-verify.ts",
+    "lecture:author": "tsx scripts/author-harness.ts"
   },
   "dependencies": {
     "@remotion/bundler": "^4.0.286",

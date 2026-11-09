@@ -7,7 +7,8 @@ import {runLayout} from '../src/layout/run-layout.js';
 import {runCompile} from '../src/compile/run-compile.js';
 import {lintTiming} from '../src/qa/lint-timing.js';
 import {lintLectureGeometry} from '../src/qa/lint-lecture-geometry.js';
-import {runSelfCritic} from '../src/qa/critic.js';
+import {runCritic, type CriticMode} from '../src/qa/run-critic.js';
+import {runAuthor} from '../src/author/run-author.js';
 import {buildReviewPack} from '../src/qa/pack.js';
 import {runRenderLecture} from './render-lecture.js';
 import {spawnSync} from 'node:child_process';
@@ -77,15 +78,21 @@ const main = async () => {
     writeFileSync(join(outDir, 'lint.report.json'), `${JSON.stringify(lintReport, null, 2)}\n`, 'utf8');
     steps.push({step: 'lint-report', ok: true});
 
+    const author = await runAuthor(lectureDir, outDir);
+    steps.push({step: 'author-plan', ok: author.ok, detail: author});
+    if (!author.ok) {
+      fail('author-plan', steps, author);
+    }
+
     const pack = await buildReviewPack(lectureDir, outDir, {
       segmentsPath: join(outDir, 'segments.json'),
       lintSummary: `Timing warnings: ${timing.issues.filter((i) => i.severity === 'warn').length}`,
     });
     steps.push({step: 'review-pack', ok: true, detail: pack});
 
-    const critic = runSelfCritic(compiled, geometry, timing);
-    writeReviewLog(outDir, critic);
-    steps.push({step: 'critic', ok: critic.ok, detail: critic.scores});
+    const {report: critic, mode: criticMode} = await runCritic(compiled, geometry, timing, outDir);
+    writeReviewLog(outDir, critic, criticMode);
+    steps.push({step: 'critic', ok: critic.ok, detail: {scores: critic.scores, mode: criticMode}});
     if (!critic.ok) {
       fail('critic', steps, critic);
     }
@@ -115,7 +122,7 @@ const main = async () => {
       JSON.stringify({
         ok: true,
         steps,
-        critic: {scores: critic.scores, average: critic.average},
+        critic: {scores: critic.scores, average: critic.average, mode: criticMode},
       }),
     );
   } catch (err) {
@@ -139,12 +146,13 @@ function tryParseJson(text: string): unknown {
   }
 }
 
-function writeReviewLog(outDir: string, critic: ReturnType<typeof runSelfCritic>) {
+function writeReviewLog(outDir: string, critic: import('../src/qa/critic.js').CriticReport, mode: CriticMode) {
   const logPath = join(outDir, 'review', 'LOG.md');
   mkdirSync(join(outDir, 'review'), {recursive: true});
   const body = `# QA log
 
-- Auto-approved (self-critic): ${new Date().toISOString()}
+- Critic mode: ${mode}
+- Timestamp: ${new Date().toISOString()}
 - Average: ${critic.average.toFixed(2)}
 - Scores: ${JSON.stringify(critic.scores)}
 `;

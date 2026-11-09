@@ -9,7 +9,8 @@
 | 3 | Done | Motion + 12 preset views; morph, persist echo, Shiki |
 | 4 | Done* | `pnpm qa` through critic + render + final-qa |
 | 5 | Done* | Fixtures, golden, `preset-regression` in qa |
-| 6 | In progress | `pnpm batch lectures/postgres` (5 lectures), `out/batch-report.json`, input hash cache |
+| 6 | Done* | 5 postgres fixtures, distinct DSL; `pnpm batch` + `pnpm opus:verify` |
+| Opus O0–O6 | Done* | VoT author plan, spatial critic, geometry tools, SVG few-shots — see `docs/PLAN_OPUS_90.md` |
 
 **Full pipeline:** `pnpm qa lectures/postgres/fixture-seq-scan`
 
@@ -21,3 +22,5 @@
 - `fixture-index-predicate`, `fixture-plan-tree`, `fixture-io-latency`, `fixture-heap-pages` (same audio/script; swap lecture id for batch/regression)
 
 **Whisper:** `pnpm whisper:install` + `pnpm whisper:serve` + `pnpm lecture <dir> transcribe`
+
+**Opus bar (agentic, no API):** `docs/AGENTIC_OPUS.md`, `docs/PLAN_OPUS_90.md`.

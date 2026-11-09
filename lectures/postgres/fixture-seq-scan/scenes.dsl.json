@@ -52,6 +52,8 @@
         {"at": {"word": "every"}, "do": "reveal", "target": "orders"},
         {"at": {"word": "heap"}, "do": "emphasize", "target": "orders.row[0]"},
         {"at": {"word": "examined"}, "do": "scan-rows", "target": "orders", "drive": "counter"},
+        {"at": {"after": "examined", "gap": "short"}, "do": "emphasize", "target": "orders.row[1]"},
+        {"at": {"after": "heap", "gap": "medium"}, "do": "focus", "target": "counter"},
         {"at": {"word": "filter"}, "do": "emphasize", "target": "orders.row[2]"},
         {"at": {"word": "reject"}, "do": "deemphasize", "target": "orders.row[2]"}
       ],

@@ -13,7 +13,7 @@ const usage = () => {
     JSON.stringify({
       ok: false,
       error:
-        'Usage: pnpm lecture <lectureDir> align|transcribe|segment|schema|layout|compile|lint|pack|render',
+        'Usage: pnpm lecture <lectureDir> align|transcribe|segment|schema|layout|compile|lint|pack|author|render',
     }),
   );
   process.exit(1);
@@ -74,6 +74,15 @@ const main = async () => {
       const report = lintTiming(compiled);
       console.log(JSON.stringify({ok: report.ok, command: cmd, issues: report.issues}));
       if (!report.ok) {
+        process.exit(1);
+      }
+      return;
+    }
+    if (cmd === 'author') {
+      const {runAuthor} = await import('../src/author/run-author.js');
+      const author = await runAuthor(dir, outDir);
+      console.log(JSON.stringify({command: cmd, ...author}));
+      if (!author.ok) {
         process.exit(1);
       }
       return;
