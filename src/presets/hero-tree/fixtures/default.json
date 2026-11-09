@@ -1,0 +1,11 @@
+{
+  "title": "B-tree path",
+  "tree": {
+    "id": "btree",
+    "nodes": [
+      {"id": "root", "label": "root"},
+      {"id": "n12", "label": "(12,20]"},
+      {"id": "leaf", "label": "leaf tuple"}
+    ]
+  }
+}

@@ -1,4 +1,4 @@
-import {mkdirSync, readFileSync, writeFileSync} from 'node:fs';
+import {existsSync, mkdirSync, readFileSync, writeFileSync} from 'node:fs';
 import {join, basename} from 'node:path';
 import {runAlign} from '../src/align/run-align.js';
 import {runSegment} from '../src/segment/run-segment.js';
@@ -6,8 +6,11 @@ import {runSchemaGate} from '../src/dsl/validate-gate.js';
 import {runLayout} from '../src/layout/run-layout.js';
 import {runCompile} from '../src/compile/run-compile.js';
 import {lintTiming} from '../src/qa/lint-timing.js';
+import {lintLectureGeometry} from '../src/qa/lint-lecture-geometry.js';
 import {runSelfCritic} from '../src/qa/critic.js';
 import {buildReviewPack} from '../src/qa/pack.js';
+import {runRenderLecture} from './render-lecture.js';
+import {spawnSync} from 'node:child_process';
 
 const lectureDir = process.argv[2];
 if (!lectureDir) {
@@ -33,8 +36,18 @@ const main = async () => {
     const schema = runSchemaGate(lectureDir, outDir);
     steps.push({step: 'schema', ok: schema.ok, detail: schema.issues});
     if (!schema.ok) {
-      console.log(JSON.stringify({ok: false, failedAt: 'schema', steps, issues: schema.issues}));
-      process.exit(1);
+      fail('schema', steps, schema.issues);
+    }
+
+    const presetQa = spawnSync('pnpm', ['exec', 'tsx', 'scripts/preset-test.ts'], {
+      encoding: 'utf8',
+      shell: true,
+    });
+    const presetJson = tryParseJson(presetQa.stdout);
+    const presetOk = presetQa.status === 0;
+    steps.push({step: 'preset-regression', ok: presetOk, detail: presetJson});
+    if (!presetOk) {
+      fail('preset-regression', steps, presetJson);
     }
 
     await runLayout(lectureDir, outDir);
@@ -46,28 +59,65 @@ const main = async () => {
     const timing = lintTiming(compiled);
     steps.push({step: 'lint-timing', ok: timing.ok, detail: timing.issues});
     if (!timing.ok) {
-      console.log(JSON.stringify({ok: false, failedAt: 'lint-timing', steps, issues: timing.issues}));
-      process.exit(1);
+      fail('lint-timing', steps, timing.issues);
     }
 
-    const critic = runSelfCritic(compiled, {ok: true, issues: []}, timing);
+    mkdirSync(join(outDir, 'review'), {recursive: true});
+    const geometry = await lintLectureGeometry(lectureDir, outDir);
+    steps.push({step: 'lint-geometry', ok: geometry.ok, detail: geometry.issues});
+    if (!geometry.ok) {
+      fail('lint-geometry', steps, geometry.issues);
+    }
+
+    const lintReport = {
+      ok: timing.ok && geometry.ok,
+      timing: timing.issues,
+      geometry: geometry.issues,
+    };
+    writeFileSync(join(outDir, 'lint.report.json'), `${JSON.stringify(lintReport, null, 2)}\n`, 'utf8');
+    steps.push({step: 'lint-report', ok: true});
+
+    const pack = await buildReviewPack(lectureDir, outDir, {
+      segmentsPath: join(outDir, 'segments.json'),
+      lintSummary: `Timing warnings: ${timing.issues.filter((i) => i.severity === 'warn').length}`,
+    });
+    steps.push({step: 'review-pack', ok: true, detail: pack});
+
+    const critic = runSelfCritic(compiled, geometry, timing);
     writeReviewLog(outDir, critic);
     steps.push({step: 'critic', ok: critic.ok, detail: critic.scores});
     if (!critic.ok) {
-      console.log(JSON.stringify({ok: false, failedAt: 'critic', steps, critic}));
-      process.exit(1);
+      fail('critic', steps, critic);
     }
 
-    if (process.env.QA_SKIP_PACK !== '1') {
-      try {
-        const stills = await buildReviewPack(lectureDir, outDir);
-        steps.push({step: 'review-pack', ok: true, detail: stills});
-      } catch (packErr) {
-        steps.push({step: 'review-pack', ok: false, detail: String(packErr)});
+    if (process.env.QA_SKIP_RENDER !== '1') {
+      await runRenderLecture(lectureDir);
+      steps.push({step: 'render', ok: true});
+
+      const finalQa = spawnSync('pnpm', ['exec', 'tsx', 'scripts/final-qa.ts', lectureDir], {
+        encoding: 'utf8',
+        shell: true,
+      });
+      const finalJson = tryParseJson(finalQa.stdout);
+      steps.push({step: 'final-qa', ok: finalQa.status === 0, detail: finalJson ?? finalQa.stderr});
+      if (finalQa.status !== 0) {
+        fail('final-qa', steps, finalJson);
       }
+
+      const pack2 = await buildReviewPack(lectureDir, outDir, {
+        segmentsPath: join(outDir, 'segments.json'),
+        lintSummary: 'Post-render filmstrip refresh',
+      });
+      steps.push({step: 'review-pack-post-render', ok: true, detail: pack2.filmstrips});
     }
 
-    console.log(JSON.stringify({ok: true, steps, critic: {scores: critic.scores, average: critic.average}}));
+    console.log(
+      JSON.stringify({
+        ok: true,
+        steps,
+        critic: {scores: critic.scores, average: critic.average},
+      }),
+    );
   } catch (err) {
     console.error(JSON.stringify({ok: false, error: String(err), steps}));
     process.exit(1);
@@ -75,6 +125,19 @@ const main = async () => {
 };
 
 main();
+
+function fail(failedAt: string, steps: StepResult[], detail: unknown): never {
+  console.log(JSON.stringify({ok: false, failedAt, steps, detail}));
+  process.exit(1);
+}
+
+function tryParseJson(text: string): unknown {
+  try {
+    return JSON.parse(text.trim());
+  } catch {
+    return null;
+  }
+}
 
 function writeReviewLog(outDir: string, critic: ReturnType<typeof runSelfCritic>) {
   const logPath = join(outDir, 'review', 'LOG.md');

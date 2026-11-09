@@ -1,13 +1,14 @@
 import {useEffect} from 'react';
 import {colors, canvas, layout} from './tokens';
 import {loadCourseFonts} from './load-fonts';
-import {StageAmbient} from './stage-ambient';
+import {StageBackdrop} from './stage-backdrop';
 
 type SampleShellProps = {
   children: React.ReactNode;
+  motionFrame?: number;
 };
 
-export const SampleShell: React.FC<SampleShellProps> = ({children}) => {
+export const SampleShell: React.FC<SampleShellProps> = ({children, motionFrame = 0}) => {
   useEffect(() => {
     void loadCourseFonts();
   }, []);
@@ -22,7 +23,7 @@ export const SampleShell: React.FC<SampleShellProps> = ({children}) => {
         overflow: 'hidden',
       }}
     >
-      <StageAmbient />
+      <StageBackdrop motionFrame={motionFrame} />
       <div
         data-id="stage-safe"
         style={{

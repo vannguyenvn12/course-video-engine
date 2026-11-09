@@ -1,0 +1,11 @@
+{
+  "title": "EXPLAIN output",
+  "code": {
+    "id": "code",
+    "lines": ["EXPLAIN SELECT *", "FROM orders", "WHERE status = 'pending';"]
+  },
+  "output": {
+    "id": "plan",
+    "lines": ["Seq Scan on orders", "  cost=0.00..24.00 rows=1200", "  Filter: (status = 'pending')"]
+  }
+}

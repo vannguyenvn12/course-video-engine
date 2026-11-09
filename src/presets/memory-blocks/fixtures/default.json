@@ -1,0 +1,12 @@
+{
+  "title": "Buffer pages",
+  "blocks": {
+    "id": "heap",
+    "pages": [
+      {"id": "p8", "label": "PAGE 8"},
+      {"id": "p7", "label": "PAGE 7"},
+      {"id": "p6", "label": "PAGE 6"},
+      {"id": "p5", "label": "PAGE 5"}
+    ]
+  }
+}

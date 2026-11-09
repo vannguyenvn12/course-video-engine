@@ -1,0 +1,8 @@
+{
+  "title": "Seq scan in SQL",
+  "code": {
+    "id": "code",
+    "language": "sql",
+    "lines": ["EXPLAIN SELECT * FROM orders", "WHERE status = 'pending';"]
+  }
+}

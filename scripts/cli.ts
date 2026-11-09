@@ -6,14 +6,14 @@ import {runCompile} from '../src/compile/run-compile.js';
 import {lintTiming} from '../src/qa/lint-timing.js';
 import {transcribeLectureAudio} from '../src/align/transcribe.js';
 import {join, basename} from 'node:path';
-import {readFileSync} from 'node:fs';
+import {mkdirSync, readFileSync} from 'node:fs';
 
 const usage = () => {
   console.error(
     JSON.stringify({
       ok: false,
       error:
-        'Usage: pnpm lecture <lectureDir> align|transcribe|segment|schema|layout|compile|lint|render',
+        'Usage: pnpm lecture <lectureDir> align|transcribe|segment|schema|layout|compile|lint|pack|render',
     }),
   );
   process.exit(1);
@@ -76,6 +76,13 @@ const main = async () => {
       if (!report.ok) {
         process.exit(1);
       }
+      return;
+    }
+    if (cmd === 'pack') {
+      const {buildReviewPack} = await import('../src/qa/pack.js');
+      mkdirSync(outDir, {recursive: true});
+      const pack = await buildReviewPack(dir, outDir, {segmentsPath: join(outDir, 'segments.json')});
+      console.log(JSON.stringify({ok: true, command: cmd, pack}));
       return;
     }
     if (cmd === 'render') {

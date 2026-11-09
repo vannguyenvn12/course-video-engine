@@ -8,6 +8,7 @@ import {cameraForFocus} from '../layout/camera.js';
 import {routeConnector} from '../layout/connectors.js';
 import type {Bbox} from '../layout/bbox.js';
 import type {MeasuredBox} from '../qa/lint-geometry.js';
+import {canvas} from '../design/tokens.js';
 
 export type CompiledBeat = {
   index: number;
@@ -23,6 +24,7 @@ export type CompiledScene = {
   id: string;
   segment: string;
   preset: string;
+  transition?: 'morph' | 'camera' | 'cut' | 'fade';
   startMs: number;
   endMs: number;
   startFrame: number;
@@ -63,7 +65,7 @@ export const compileTimeline = (
         do: r.beat.do,
         target: r.beat.target,
       };
-      if (r.beat.do === 'focus' && r.beat.target) {
+      if ((r.beat.do === 'focus' || r.beat.do === 'draw') && r.beat.target) {
         const box = beatLayout[targetRootId(r.beat.target)] as MeasuredBox | undefined;
         if (box) {
           compiled.camera = cameraForFocus(box);
@@ -87,15 +89,21 @@ export const compileTimeline = (
       }
       return compiled;
     });
+    beats.sort((a, b) => a.startMs - b.startMs);
+    beats.forEach((b, index) => {
+      b.index = index;
+    });
 
+    const fps = canvas.fps;
     scenes.push({
       id: scene.id,
       segment: scene.segment,
       preset: scene.preset,
+      transition: scene.transition,
       startMs: range.startMs,
       endMs: range.endMs,
-      startFrame: resolved[0]?.frame ?? 0,
-      endFrame: Math.round((range.endMs / 1000) * 30),
+      startFrame: Math.round((range.startMs / 1000) * fps),
+      endFrame: Math.round((range.endMs / 1000) * fps),
       beats,
     });
   }

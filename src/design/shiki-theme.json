@@ -1,0 +1,16 @@
+{
+  "name": "course-vault",
+  "type": "dark",
+  "colors": {
+    "editor.background": "#1c1817",
+    "editor.foreground": "#f0e8e4"
+  },
+  "tokenColors": [
+    {"scope": ["keyword", "storage.type"], "settings": {"foreground": "#b8aea6"}},
+    {"scope": ["string", "constant.character.escape"], "settings": {"foreground": "#9ec9cf"}},
+    {"scope": ["comment"], "settings": {"foreground": "#6a625c"}},
+    {"scope": ["entity.name.function", "support.function"], "settings": {"foreground": "#d4ccc6"}},
+    {"scope": ["constant.numeric"], "settings": {"foreground": "#d4ccc6"}},
+    {"scope": ["punctuation", "operator"], "settings": {"foreground": "#b8aea6"}}
+  ]
+}

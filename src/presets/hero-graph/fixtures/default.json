@@ -1,0 +1,12 @@
+{
+  "title": "Planner flow",
+  "graph": {
+    "id": "flow",
+    "nodes": [
+      {"id": "parse", "label": "Parse"},
+      {"id": "plan", "label": "Planner"},
+      {"id": "exec", "label": "Executor"}
+    ],
+    "edges": [["parse", "plan"], ["plan", "exec"]]
+  }
+}

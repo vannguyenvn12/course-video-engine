@@ -1,7 +1,8 @@
 import type {Timeline} from '../align/types.js';
 import {SegmentsFileSchema, type Segment} from './types.js';
 
-const MIN_MS = 4_000;
+/** One sentence per segment when ≥2.5s (matches lint T-SCENE floor). */
+const MIN_MS = 2_500;
 const MAX_MS = 20_000;
 const GAP_MERGE_MS = 600;
 

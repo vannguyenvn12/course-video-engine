@@ -1,0 +1,7 @@
+{
+  "title": "Transaction lanes",
+  "lanes": [
+    {"id": "read", "label": "READ"},
+    {"id": "write", "label": "WRITE"}
+  ]
+}

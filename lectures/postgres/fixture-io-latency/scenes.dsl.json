@@ -1,0 +1,130 @@
+{
+  "lecture": "postgres/fixture-io-latency",
+  "scenes": [
+    {
+      "id": "s01",
+      "segment": "seg-01",
+      "preset": "memory-blocks",
+      "slots": {
+        "title": "Sequential scan",
+        "blocks": {
+          "id": "heap",
+          "pages": [
+            {"id": "p8", "label": "PAGE 8"},
+            {"id": "p7", "label": "PAGE 7"},
+            {"id": "p6", "label": "PAGE 6"},
+            {"id": "p5", "label": "PAGE 5"}
+          ]
+        }
+      },
+      "beats": [
+        {"at": {"segmentStart": true}, "do": "reveal", "target": "heap"},
+        {"at": {"word": "read"}, "do": "emphasize", "target": "heap.page[0]"},
+        {"at": {"word": "sequential"}, "do": "traverse", "target": "heap.page[1]"},
+        {"at": {"word": "table"}, "do": "traverse", "target": "heap.page[2]"}
+      ],
+      "transition": "cut"
+    },
+    {
+      "id": "s02",
+      "segment": "seg-02",
+      "preset": "hero-table-with-annotation",
+      "slots": {
+        "title": "Heap rows",
+        "table": {
+          "id": "orders",
+          "columns": ["id", "status", "total"],
+          "rows": [
+            ["1", "pending", "42.00"],
+            ["2", "shipped", "18.50"],
+            ["3", "pending", "9.99"]
+          ]
+        },
+        "annotation": {
+          "id": "counter",
+          "kind": "counter",
+          "label": "Rows scanned",
+          "from": 0,
+          "to": 3
+        }
+      },
+      "beats": [
+        {"at": {"word": "every"}, "do": "reveal", "target": "orders"},
+        {"at": {"word": "heap"}, "do": "emphasize", "target": "orders.row[0]"},
+        {"at": {"word": "examined"}, "do": "scan-rows", "target": "orders", "drive": "counter"},
+        {"at": {"word": "filter"}, "do": "emphasize", "target": "orders.row[2]"},
+        {"at": {"word": "reject"}, "do": "deemphasize", "target": "orders.row[2]"}
+      ],
+      "transition": "morph"
+    },
+    {
+      "id": "s03",
+      "segment": "seg-03",
+      "preset": "compare-split",
+      "slots": {
+        "title": "Planner output",
+        "left": {"id": "seq", "label": "Seq Scan"},
+        "right": {"id": "idx", "label": "No index"}
+      },
+      "persist": ["orders"],
+      "beats": [
+        {"at": {"segmentStart": true}, "do": "reveal", "target": "seq"},
+        {"at": {"word": "plan"}, "do": "reveal", "target": "idx"},
+        {"at": {"word": "sequential"}, "do": "emphasize", "target": "seq"},
+        {"at": {"word": "scan"}, "do": "draw", "target": "seq"},
+        {"at": {"word": "index"}, "do": "emphasize", "target": "idx"},
+        {"at": {"word": "predicate"}, "do": "focus", "target": "idx"}
+      ],
+      "transition": "morph"
+    },
+    {
+      "id": "s04",
+      "segment": "seg-04",
+      "preset": "metric-callout",
+      "slots": {
+        "title": "Table growth",
+        "metric": {"id": "io", "value": "IO", "unit": "cost / row"}
+      },
+      "beats": [
+        {"at": {"segmentStart": true}, "do": "reveal", "target": "io"},
+        {"at": {"word": "matching"}, "do": "emphasize", "target": "io"},
+        {"at": {"word": "costs"}, "do": "count", "target": "io"},
+        {"at": {"word": "grows"}, "do": "focus", "target": "io"}
+      ],
+      "transition": "morph"
+    },
+    {
+      "id": "s05",
+      "segment": "seg-05",
+      "preset": "hero-code-plus-output",
+      "slots": {
+        "title": "EXPLAIN latency",
+        "code": {
+          "id": "code",
+          "language": "sql",
+          "lines": [
+            "EXPLAIN SELECT *",
+            "FROM orders",
+            "WHERE status = 'pending';"
+          ]
+        },
+        "output": {
+          "id": "plan",
+          "lines": [
+            "Seq Scan on orders",
+            "  cost=0.00..24.00 rows=1200",
+            "  Filter: (status = 'pending')"
+          ]
+        }
+      },
+      "beats": [
+        {"at": {"segmentStart": true}, "do": "reveal", "target": "code"},
+        {"at": {"word": "simple"}, "do": "type-code", "target": "code"},
+        {"at": {"word": "every"}, "do": "reveal", "target": "plan"},
+        {"at": {"word": "latency"}, "do": "connect", "from": "code", "to": "plan"},
+        {"at": {"word": "wide"}, "do": "highlight-lines", "target": "code.line[2]"}
+      ],
+      "transition": "morph"
+    }
+  ]
+}

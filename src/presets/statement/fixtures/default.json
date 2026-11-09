@@ -1,0 +1,3 @@
+{
+  "statement": "No index on status — planner chooses seq scan."
+}

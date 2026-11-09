@@ -18,6 +18,9 @@ const bundleMeta = join(cacheDir, 'preset-measure-meta.json');
 const hashSources = (): string => {
   const h = createHash('sha256');
   h.update(readFileSync(entry));
+  h.update(readFileSync(join(process.cwd(), 'src', 'design', 'stage-backdrop.tsx')));
+  h.update(readFileSync(join(process.cwd(), 'src', 'design', 'stage-ambient.tsx')));
+  h.update(readFileSync(join(process.cwd(), 'src', 'design', 'sample-shell.tsx')));
   return h.digest('hex').slice(0, 16);
 };
 

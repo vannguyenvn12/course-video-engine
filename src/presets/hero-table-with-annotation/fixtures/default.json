@@ -1,0 +1,9 @@
+{
+  "title": "Every row examined",
+  "table": {
+    "id": "orders",
+    "columns": ["id", "status", "total"],
+    "rows": [["1", "pending", "42.00"], ["2", "shipped", "18.50"]]
+  },
+  "annotation": {"id": "counter", "kind": "counter", "label": "Rows scanned", "from": 0, "to": 2}
+}

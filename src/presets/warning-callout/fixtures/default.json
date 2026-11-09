@@ -1,0 +1,4 @@
+{
+  "title": "Mistake",
+  "warning": "SELECT * hides real IO cost"
+}

@@ -48,7 +48,7 @@ describe('Phase 2 — DSL, layout, compile', () => {
     process.env.LAYOUT_FALLBACK = '1';
     await runLayout(fixtureDir, outDir);
     const {compiled} = runCompile(fixtureDir, outDir);
-    expect(compiled.scenes.length).toBe(3);
+    expect(compiled.scenes.length).toBe(5);
     expect(compiled.scenes[0]!.beats[0]!.frame).toBeGreaterThanOrEqual(0);
   });
 });

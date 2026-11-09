@@ -3,6 +3,7 @@ import {join, basename} from 'node:path';
 import {bundle} from '@remotion/bundler';
 import {renderMedia, selectComposition} from '@remotion/renderer';
 import {loadDsl} from '../src/dsl/validate-gate.js';
+import {persistCarryFromPrevious} from '../src/dsl/persist-carry.js';
 import {canvas} from '../src/design/tokens.js';
 import {withTypeScriptExtensionAlias} from '../src/remotion/webpack-extension-alias.js';
 
@@ -23,17 +24,23 @@ const audioSrc = join(lectureDir, 'audio.mp3');
       preset: string;
       startFrame: number;
       endFrame: number;
+      transition?: 'morph' | 'camera' | 'cut' | 'fade';
+      beats: import('../src/compile/compile.js').CompiledBeat[];
     }[];
   };
   const dsl = loadDsl(lectureDir);
   const slotById = new Map(dsl.scenes.map((s) => [s.id, s.slots]));
+  const transitionById = new Map(dsl.scenes.map((s) => [s.id, s.transition]));
 
-  const scenes = compiled.scenes.map((s) => ({
+  const scenes = compiled.scenes.map((s, index) => ({
     id: s.id,
     preset: s.preset,
     startFrame: s.startFrame,
     durationFrames: Math.max(1, s.endFrame - s.startFrame),
+    transition: s.transition ?? transitionById.get(s.id),
     slots: slotById.get(s.id) ?? {},
+    beats: s.beats,
+    persistEcho: persistCarryFromPrevious(dsl, index),
   }));
 
   const publicAudio = join(process.cwd(), 'public', `lecture-audio-${name}.mp3`);
@@ -76,7 +83,6 @@ const audioSrc = join(lectureDir, 'audio.mp3');
     overwrite: true,
     muted: true,
     enforceAudioTrack: false,
-    forceIPv4: true,
   });
 
   const audioTrack = existsSync(audioSrc) ? audioSrc : join(process.cwd(), 'public', 'silence.mp3');
@@ -101,9 +107,9 @@ const audioSrc = join(lectureDir, 'audio.mp3');
   return output;
 };
 
-const lectureDir = process.argv[2];
-if (lectureDir) {
-  runRenderLecture(lectureDir).catch((err) => {
+const isDirectRun = process.argv[1]?.includes('render-lecture');
+if (isDirectRun && process.argv[2]) {
+  runRenderLecture(process.argv[2]).catch((err) => {
     console.error(JSON.stringify({ok: false, error: String(err)}));
     process.exit(1);
   });

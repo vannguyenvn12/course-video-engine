@@ -19,3 +19,12 @@ export const continueRender = (): void => undefined;
 export const Audio = (): null => null;
 export const Sequence = ({children}: {children?: ReactNode}) => <>{children}</>;
 export const useCurrentFrame = (): number => 0;
+export const useVideoConfig = (): {fps: number} => ({fps: 30});
+
+export const interpolate = (
+  input: number,
+  inputRange: number[],
+  outputRange: number[],
+): number => outputRange[outputRange.length - 1] ?? 0;
+
+export const spring = (): number => 1;

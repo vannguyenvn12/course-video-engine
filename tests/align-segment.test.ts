@@ -41,7 +41,7 @@ describe('Phase 1 — align + segment', () => {
     const {segments} = runSegment(fixtureDir);
     expect(segments.segments.length).toBeGreaterThanOrEqual(1);
     for (const seg of segments.segments) {
-      expect(seg.durationMs).toBeGreaterThanOrEqual(4_000);
+      expect(seg.durationMs).toBeGreaterThanOrEqual(2_500);
       expect(seg.durationMs).toBeLessThanOrEqual(20_000);
     }
     const last = segments.segments.at(-1)!;

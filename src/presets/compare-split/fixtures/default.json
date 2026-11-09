@@ -1,0 +1,5 @@
+{
+  "title": "Scan vs index",
+  "left": {"id": "seq", "label": "Seq Scan"},
+  "right": {"id": "idx", "label": "Index Scan"}
+}
